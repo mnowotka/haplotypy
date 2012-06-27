@@ -1,0 +1,231 @@
+\documentclass{llncs}
+\usepackage{graphicx}
+\usepackage[utf8]{inputenc}
+\usepackage[table]{xcolor}
+\usepackage{url}
+\usepackage{listings}
+\usepackage{colortbl}
+\usepackage{hhline}
+\usepackage{ae,aecompl,amsfonts}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage{verbatim}
+\usepackage{array}
+\usepackage{pstricks}
+\usepackage{listings}
+\usepackage{multirow}
+\usepackage{wrapfig}
+\usepackage{caption}
+\usepackage{subcaption}
+
+%
+%---------- keywords environment -----------
+\newenvironment{keywords}{%
+      \list{}{\advance\topsep by-0.50cm\relax\small
+      %\list{}{\small
+      \leftmargin=1cm
+      \labelwidth=1cm%\z@
+      \listparindent=1cm%\z@
+      \itemindent\listparindent
+      \rightmargin\leftmargin}\item[\hskip\labelsep
+                                    \bfseries\keywordsname]}
+    {\endlist}
+%---------- end keywords environment ------
+
+\title{Heuristics for haplotype frequency estimation}
+\subtitle{with a large number of analyzed loci}
+\author{Michał Nowotka}
+\institute{\includegraphics[width=0.14\textwidth]{images/logo} \\ \smallskip Warsaw University of Technology \\ \smallskip The Faculty of Electronics and Information Technology \\ \smallskip The Institute of Computer Science \\ \smallskip 
+\email{mmmnow@gmail.com}}
+
+\begin{document}
+\definecolor{ListingBackground}{rgb}{0.95,0.95,0.95}
+% kody źródłowe z podpisem
+\lstdefinestyle{outcode}
+{
+basicstyle={\scriptsize},
+keywordstyle={\bf\color{blue}},
+commentstyle={\em\color{red}},
+numbers=left, 
+stepnumber=5, 
+firstnumber=1,
+numberfirstline=true,
+numberblanklines=true,
+numberstyle={\sf\tiny}, 
+numbersep=10pt, 
+tabsize=2,
+xleftmargin=17pt,
+framexleftmargin=3pt,
+framexbottommargin=2pt,
+framextopmargin=2pt,
+framexrightmargin=0pt,
+showstringspaces=false,
+showspaces=false,
+backgroundcolor={\color{ListingBackground}},
+%extendedchars=true,
+% title=\lstname,
+captionpos=b,
+% abovecaptionskip=1pt,
+% belowcaptionskip=1pt,
+frame=tb,
+framerule=0.1pt, 
+}
+\maketitle
+
+\begin{abstract}
+\smallskip
+{\bf Background:} Determining haplotypes with laboratory methods is an expensive and time-consuming
+activity therefore unsuitable for the analysis of genetic data coming from a large number of tested
+individuals. Many existing algorithms for phasing genotypes operate on very impractical runtime and
+take into account only certain types of polymorphisms, often without providing graphical user interface.
+\\
+
+{\bf Results:} The heuristic algorithm for estimating haplotype frequency developed in this work was
+examined in terms of time complexity, the speed of execution and the accuracy of results. Consequently,
+a Rich Internet Application that implements described algorithm has been created and its performance
+and accuracy to a known set of test data is analyzed. Eventually, a discussion on the architecture and
+the application’s usability in bioinformatics applications is presented.
+\\
+
+{\bf Conclusion:} Proposed algorithm can be used to improve the complexity of any algorithm that solves
+the problem of genotype phasing, which has a worse time complexity and is convergent. The algorithm
+is easy to scale and can achieve the desired ratio of calculations accuracy to execution time. Implemented
+application meets all requirements for the programs to solve problems in biology i.e. high performance,
+accessibility, scalability and usability.
+\end{abstract}
+
+\begin{keywords}
+haplotype, locus, null allele, bioinformatics, genetics, heuristic
+\end{keywords}
+
+\section{Introduction}
+In diploid organisms such as human there are two non-identical copies of autosomal chromosomes - one inherited from the mother, and another one from the father. 
+The combination of single nucleotide polymorphisms carried on the same chromosome is specific for each organism and called haplotype. 
+Although it is possible to directly determine haplotypes for a particular organism using laboratory techniques, such methods are very expensive and relatively slow. 
+
+
+On the other hand, there are many effective techniques for determining unordered information about SNPs. 
+This unstructured information is called genotype. 
+Genotypes provide information about alleles in loci but do not assign this information to chromosomes. 
+
+
+In other words, if the genotype contains two different alleles for a specific locus, there is no way to determine which of the alleles was inherited from the father and which from the mother. 
+The problem is even more difficult if the information about some of them is not available (so called null alleles). 
+Since haplotypes determine the exact sequence of the protein encoded by the genes, finding it in human populations is an important step in identifying the genetic basis of complex diseases. 
+For this reason, algorithmic haplotype inference drawns the attention of many researchers.
+
+\section{The algorithm}
+
+In 2010 the computer program called NullHap was created at WUT \cite{nowak}.
+The goal of the application was to estimate the probability of occurrences of haplotypes for a given population based on genotype observations. 
+The distinguishing feature of the application was the ability to operate on all possible types of loci -- both biallelic SNPs, as well as multiallelic loci or even null alleles.
+One of the major drawbacks of the program is its exponential time complexity versus number of loci.
+A recently published study \cite{gusev} suggests the possibility of substantial improvements in the complexity of the algorithm by introducing the concept of short overlapping window.
+In the new approach a long genotype sequence would be divided into many short pieces of constant length, called windows.
+The end of one window would be the beginning of a neighboring one.
+The algorithm used by NullHap would not be applied to the whole genotype but just for windows and the results for a given window will be taken into account only when the beginning of a solution is compatible with the end solution of the previous window.
+This solution should improve time complexity from exponential to linear.
+
+The project aims to use this new approach for haplotype inference and compare with the NullHap program in terms of execution time and accuracy of results.
+The end result will be to provide researchers a tool to estimate the haplotype frequencies that is efficient, scalable, portable and provide user friendly interface.
+
+EM (Expectation-Maximization) algorithm  is used in statistics for finding maximum likelihood estimates of parameters in the probabilistic model when the model depends on the hidden variables that cannot be directly observed.
+EM is an iterative algorithm that performs the Expectation step, that calculates the expected probability value for the current distribution of hidden variables, and the Maximization step, which calculates the value of the parameters that maximize the probability found in the E step.
+These parameters are then used to determine the distribution of hidden variables in the next E step.
+EM belongs to local optimization algorithms, which means that it can be trapped in local extreme.
+It converges, that is, not moving away from the optimal solution over time.
+Application of EM algorithm to infering haplotypes has exponential time complexity.
+
+Due to the unsatisfactory time complexity of the EM algorithm, it has been wrapped in a higher-level algorithm that uses a property of convergence of the EM.
+In the first step genotype is divided into smaller fragments called windows.
+Window properties are determined by width and overlap parameters.
+For each window most probable haplotypes are computed.
+Next, the partial haplotypes are combined.
+This is done by the following rule: two neigbouring haplotypes can be combined if and only if all alleles at the common loci are the same.
+The program generates all possible combinations of haplotype connections and evaluates each of them.
+Then the resulting haplotypes are ordered by decreasing values ​​of evaluation function.
+The more widnows overlap with each other, the less combinations need to be evaluated.
+Reducing the amount is the purpose of overlapping windows.
+
+\section{The architecture}
+
+Implemented application is a kind of RIA (Rich Internet Application) based on the client-server model. 
+For the end user (most often a biologist) this means that all the functionality can be accessed from a web browser using very intuitive graphical user interface. 
+That also means the application can be run on different hardware and software architectures. 
+The server side part can be installed on every linux box using a few standard commands. 
+No additional software is needed. 
+Configuration is stored in a handful of human readable configuration files already containing reasonable settings. 
+All this is done to speed up deployment process and improve user experience.
+
+
+Logically the application is spitted into three layers. 
+Presentation layer, located on the clientside in a secure environment of web browser sandbox is implemented in ActionScript language using Flex framework. 
+
+
+Data (persistency) layer is implemented on the client side using python language and Django object-relational mapping. 
+This makes it easier to switch between many data models -- which is especially important in early stages of development, different database engines can also be changed easily.
+
+Application layer is implemented in C++ and python. 
+The usage of fast C++ language is aimed at eliminating bottlenecks in the most time-critical part of the application.
+Modular design makes the application very flexible and generic. 
+Any part can be replaced with another implementation and possibly improve the results. 
+
+
+\section{Results}
+
+Test data consisted of well-known genotype set. 
+All genotypes contained null allels and had 10 loci each.
+Solving the problem of size 10 is time-consuming for a PC computer and the time can be measured easily.
+The presence of null alleles makes full use of the algorithm. 
+In addition, for such a length one can choose a wide variety of width and overlap parameters.
+
+The measurements were performed for every possible combination of width and overlap parameters.
+For each combination the experiment was repeated five times and results along with averaged time were recorded.
+All measurements were performed on a computer with an Intel Core Duo T9550 (2.66 GHz), 2GB of RAM.
+
+Error function is the sum of the absolute values ​​of the difference between a rank position of haplotype given by the windowless version and the rank position of the same haplotype produced by algorithm using windows.
+$$ Error = \sum_{k=1}^{hap} |R^{*}(k) - R(k)|$$
+
+The results are presented in two surface charts.
+One of them illustrates the error as a function of width and overlap parameters.
+Note the similarity of the graph to the graph presented in \cite{gusev}.
+The second one shows the execution time in milliseconds.
+There is an exponential relationship between the error function and the parameters of the window.
+On the other hand, execution time increases linearly with overlap parameter and exponential with window length.
+
+\begin{figure}
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/error}
+\caption{Error as a function of width and overlap parameters}
+\label{fig:error}
+\end{subfigure}%
+~
+\begin{subfigure}[b]{0.5\textwidth}
+\centering
+\includegraphics[width=\textwidth]{images/czas}
+\caption{Execution time as a function of width and overlap parameters}
+\label{fig:time}
+\end{subfigure}
+\end{figure}
+
+\section{Conclusions}
+
+Results show that new approach scales very well.
+There is wide variety of defferent combinations of with and overlap parameters where the error is negligible.
+Only in the corner cases error value grows rapidly.
+What is more, inceasing overlap improves accuracy exponentialy but time is increases only linearly wich laverates and scales computation.
+
+\begin{thebibliography}{99}
+
+\bibitem{gusev} A. Gusev, I. I. Mandoiu, B. Pasaniuc: Highly Scalable Genotype Phasing by Entropy Minimization, IEEE/ACM transactions on computational biology and bioinformatics Vol. 5, No. 2, (april-june ’08)
+\bibitem{nowak} R. M. Nowak, R. Płoski: NullHap – a versatile application to estimate haplotype frequencies from unphased genotypes in the presence of null alleles, BCM bioinformatics 2008, 9:330, August 2008
+\bibitem{boost} D. Abrahams and R.W. Grosse-Kunstleve. Building hybrid systems with Boost. Python. CC Plus Plus Users Journal, 21(7):29–36, 2003.
+\bibitem{bench} D.A. Bader, Y. Li, T. Li, and V. Sachdeva. BioPerf: A benchmark suite to evaluate high-performance computer architecture on bioinformatics applications. 2006.
+\bibitem{hapmap} P. Deloukas and D. Bentley. The HapMap project and its application to genetic studies of drug response. The Pharmacogenomics Journal, 4(2):88–90, 2004.
+\bibitem{em} L. Excoffier and M. Slatkin. Maximum-likelihood estimation of molecular haplotype frequencies in a diploid population. Molecular biology and evolution, 12(5):921, 1995.
+\bibitem{guts} D. Gusfield. Haplotyping as perfect phylogeny: conceptual framework and efficient solutions. In Proceedings of the sixth annual international conference on Computational biology, page 175. ACM, 2002.
+
+\end{thebibliography}
+
+\end{document}
