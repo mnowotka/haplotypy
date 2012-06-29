@@ -94,9 +94,9 @@ application meets all requirements for the programs to solve problems in biology
 accessibility, scalability and usability.
 \end{abstract}
 
-\begin{keywords}
+%\begin{keywords}
 haplotype, locus, null allele, bioinformatics, genetics, heuristic
-\end{keywords}
+%\end{keywords}
 
 \section{Introduction}
 In diploid organisms such as human there are two non-identical copies of autosomal chromosomes - one inherited from the mother, and another one from the father. 
@@ -143,7 +143,7 @@ For each window most probable haplotypes are computed.
 Next, the partial haplotypes are combined.
 This is done by the following rule: two neigbouring haplotypes can be combined if and only if all alleles at the common loci are the same.
 The program generates all possible combinations of haplotype connections and evaluates each of them.
-Then the resulting haplotypes are ordered by decreasing values ​​of evaluation function.
+Then the resulting haplotypes are ordered by decreasing values of evaluation function.
 The more widnows overlap with each other, the less combinations need to be evaluated.
 Reducing the amount is the purpose of overlapping windows.
 
@@ -183,7 +183,7 @@ The measurements were performed for every possible combination of width and over
 For each combination the experiment was repeated five times and results along with averaged time were recorded.
 All measurements were performed on a computer with an Intel Core Duo T9550 (2.66 GHz), 2GB of RAM.
 
-Error function is the sum of the absolute values ​​of the difference between a rank position of haplotype given by the windowless version and the rank position of the same haplotype produced by algorithm using windows.
+Error function is the sum of the absolute values of the difference between a rank position of haplotype given by the windowless version and the rank position of the same haplotype produced by algorithm using windows.
 $$ Error = \sum_{k=1}^{hap} |R^{*}(k) - R(k)|$$
 
 The results are presented in two surface charts.

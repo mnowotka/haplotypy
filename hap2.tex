@@ -31,8 +31,8 @@
   Warsaw, Poland\\
 }
 
-\authorinfo{Further author information: (Send correspondence to Micha\l{} Nowotka)\\
-  Micha\l Nowotka: E-mail: mmmnow@gmail.com}
+\authorinfo{Further author information: (Send correspondence to Robert Nowak)\\
+  Robert Nowak: E-mail: r.m.nowak@elka.pw.edu.pl}
 
 \begin{document}
 \maketitle
@@ -61,21 +61,40 @@ accessibility, scalability and usability.
 \section{Introduction}
 In diploid organisms such as human there are two non-identical copies of autosomal chromosomes - one inherited from the mother, and another one from the father.
 The combination of single nucleotide polymorphisms carried on the same chromosome is specific for each organism and called haplotype.
-Although it is possible to directly determine haplotypes for a particular organism using laboratory techniques, such methods are very expensive and relatively slow.
+Although it is possible to directly determine haplotypes for a particular organism using laboratory techniques \cite{douglas},
+such methods are very expensive and relatively slow.
 
-On the other hand, there are many effective techniques for determining unordered information about SNPs.
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.6]{images/poli}
+\caption{The lack of phase information after typing leads to ambiguous of the haplotypes, example.}
+\label{fig:poli}
+\end{figure}
+
+On the other hand, there are many effective techniques for determining unordered information about SNPs \cite{hapmap}.
 This unstructured information is called genotype.
 Genotypes provide information about alleles in loci but do not assign this information to chromosomes.
 
-In other words, if the genotype contains two different alleles for a specific locus, there is no way to determine which of the alleles was inherited from the father and which from the mother.
-The problem is even more difficult if the information about some of them is not available (so called null alleles).
-Since haplotypes determine the exact sequence of the protein encoded by the genes, finding it in human populations is an important step in identifying the genetic basis of complex diseases.
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.6]{images/null}
+\caption{The ambiguous of the haplotypes for present-absent genes after typing, example.}
+\label{fig:poli}
+\end{figure}
+
+
+
+In other words, if the genotype contains two different alleles for a specific locus,
+there is no way to determine which of the alleles was inherited from the father and which from the mother, as depicted in Fig.~\ref{fig:poli}.
+The problem is even more difficult if there are present-absent alleles (so called null alleles), as depicted in Fig.~\ref{fig:null}y.
+Since haplotypes determine the exact sequence of the protein encoded by the genes,
+finding it in human populations is an important step in identifying the genetic basis of complex diseases.
 For this reason, algorithmic haplotype inference drawns the attention of many researchers.
 The search space grows exponentially with number of considered loci,
-if $Q$ is a set of haplotypes for given genotype, $h$ is number of observed heterozygous in this genotype, $n$ is number of observed (not null) allels,
+if $Q$ is a set of haplotypes for given genotype, $h$ is number of observed heterozygous in this genotype, $n$ is number of observed (not null) alleles,
 for loci having null allele,
 $|Q| = 2^{h - 1}*3^{n}$ if we observe at least one heterozygous ($h > 0$) or $|Q|=\frac{3^{n}+1}{2}$ otherwise.
-The large space is the main limitation of current used algorithms.
+The large space is the main limitation of current used algorithms \cite{arlequin, phase, haploihp, nowak}.
 
 \section{The algorithm}
 
@@ -93,7 +112,7 @@ This solution should improve time complexity from exponential to linear.
 \begin{figure}[!htb]
 \centering
 \includegraphics[scale=0.7]{images/window}
-\caption{The window idea - sequence is divided into shorter, overlapping sub-sequencef of constant length.}
+\caption{The window idea - sequence is divided into shorter, overlapping sub-sequence of constant length.}
 \label{fig:window}
 \end{figure}
 
@@ -101,7 +120,7 @@ This solution should improve time complexity from exponential to linear.
 The project aims to use this new approach for haplotype inference and compare with the NullHap program in terms of execution time and accuracy of results.
 The end result will be to provide researchers a tool to estimate the haplotype frequencies that is efficient, scalable, portable and provide user friendly interface.
 
-EM (Expectation-Maximization) algorithm  is used in statistics for finding maximum likelihood estimates of parameters in the probabilistic model when the model depends on the hidden variables that cannot be directly observed.
+EM (Expectation-Maximization) algorithm \cite{em}  is used in statistics for finding maximum likelihood estimates of parameters in the probabilistic model when the model depends on the hidden variables that cannot be directly observed.
 EM is an iterative algorithm that performs the Expectation step, that calculates the expected probability value for the current distribution of hidden variables, and the Maximization step, which calculates the value of the parameters that maximize the probability found in the E step.
 These parameters are then used to determine the distribution of hidden variables in the next E step.
 EM belongs to local optimization algorithms, which means that it can be trapped in local extreme.
@@ -126,28 +145,22 @@ $S = (n_{1}, n_{2},\ldots{},n_{G})$ is observed sample, $|Q_{j}|$ is number of e
   \label{eqZadanie}
 \end{eqnarray*}
 
-Application of EM algorithm to infering haplotypes has exponential time complexity.
+Application of EM algorithm to inferring haplotypes has exponential time complexity.
 
 Due to the unsatisfactory time complexity of the EM algorithm, it has been wrapped in a higher-level algorithm that uses a property of convergence of the EM.
 In the first step genotype is divided into smaller fragments called windows.
 Window properties are determined by width and overlap parameters.
 For each window most probable haplotypes are computed.
 Next, the partial haplotypes are combined.
-This is done by the following rule: two neigbouring haplotypes can be combined if and only if all alleles at the common loci are the same.
+This is done by the following rule: two neighbouring haplotypes can be combined if and only if all alleles at the common loci are the same.
 The program generates all possible combinations of haplotype connections and evaluates each of them.
 Then the resulting haplotypes are ordered by decreasing values of evaluation function.
-The more widnows overlap with each other, the less combinations need to be evaluated.
+The more windows overlap with each other, the less combinations need to be evaluated.
 Reducing the amount is the purpose of overlapping windows.
 
 \section{The architecture}
 
 Implemented application is a kind of RIA (Rich Internet Application) based on the client-server model.
-For the end user (most often a biologist) this means that all the functionality can be accessed from a web browser using very intuitive graphical user interface.
-That also means the application can be run on different hardware and software architectures.
-The server side part can be installed on every linux box using a few standard commands.
-No additional software is needed.
-Configuration is stored in a handful of human readable configuration files already containing reasonable settings.
-All this is done to speed up deployment process and improve user experience.
 
 \begin{figure}[!htb]
 \centering
@@ -156,39 +169,42 @@ All this is done to speed up deployment process and improve user experience.
 \label{fig:scheme}
 \end{figure}
 
-Logically the application is spitted into three layers, as depicted in Fig.~\ref{fig:scheme}.
-Presentation layer, located on the clientside in a secure environment of web browser sandbox is implemented in ActionScript language using Flex framework.
+For the end user (most often a biologist) this means that all the functionality can be accessed from a web browser using very intuitive graphical user interface.
+The sample window is depicted in Fig.~\ref{fig:organisms}.
+That also means the application can be run on different hardware and software architectures.
+The server side part can be installed on every Linux box using a few standard commands.
+No additional software is needed.
+Configuration is stored in a handful of human readable configuration files already containing reasonable settings.
+All this is done to speed up deployment process and improve user experience.
 
-Data (persistency) layer is implemented on the client side using python language and Django object-relational mapping.
+\begin{figure}[!htb]
+\centering
+\includegraphics[scale=0.4]{images/Organisms}
+\caption{Application window for defining the loci, alleles and organisms.}
+\label{fig:organisms}
+\end{figure}
+
+Logically the application is spitted into three layers, as depicted in Fig.~\ref{fig:scheme}.
+Presentation layer, located on the client side in a secure environment of web browser sandbox is implemented in ActionScript language using Flex framework.
+
+Data (persistency) layer is implemented on the client side using Python language and Django object-relational mapping.
 This makes it easier to switch between many data models -- which is especially important in early stages of development,
 different database engines can also be changed easily.
 
 Application layer is implemented in C++ and Python.
 The usage of fast C++ language is aimed at eliminating bottlenecks in the most time-critical part of the application.
-Modular design makes the application very flexible and generic.
+Modular design makes the application very flexible and generic \cite{boost}.
 Any part can be replaced with another implementation and possibly improve the results.
 
 \section{Results}
 
 Test data consisted of well-known genotype set.
-All genotypes contained null allels and had 10 loci each.
+All genotypes contained null alleles and had 10 loci each.
+It describes polymorphic killer inhibitory receptor (KIR) genes for genotyping 90 unrelated blood donors and 52 individuals from 13 families
+\cite{crum2000development}.
 Solving the problem of size 10 is time-consuming for a PC computer and the time can be measured easily.
 The presence of null alleles makes full use of the algorithm.
 In addition, for such a length one can choose a wide variety of width and overlap parameters.
-
-The measurements were performed for every possible combination of width and overlap parameters.
-For each combination the experiment was repeated five times and results along with averaged time were recorded.
-All measurements were performed on a computer with an Intel Core Duo T9550 (2.66 GHz), 2GB of RAM.
-
-Error function is the sum of the absolute values of the difference between a rank position of haplotype given by the windowless version and the rank position of the same haplotype produced by algorithm using windows.
-$$ Error = \sum_{k=1}^{hap} |R^{*}(k) - R(k)|$$
-
-The results are presented in two surface charts.
-One of them illustrates the error as a function of width and overlap parameters.
-Note the similarity of the graph to the graph presented in \cite{gusev}.
-The second one shows the execution time in milliseconds.
-There is an exponential relationship between the error function and the parameters of the window.
-On the other hand, execution time increases linearly with overlap parameter and exponential with window length.
 
 \begin{figure}[!htb]
 \centering
@@ -204,24 +220,30 @@ On the other hand, execution time increases linearly with overlap parameter and 
 \label{fig:time}
 \end{figure}
 
+
+The measurements were performed for every possible combination of width and overlap parameters.
+For each combination the experiment was repeated five times and results along with averaged time were recorded.
+All measurements were performed on a computer with an Intel Core Duo T9550 (2.66 GHz), 2GB of RAM.
+
+Error function is the sum of the absolute values of the difference between a rank position of haplotype given by the windowless version and the rank position of the same haplotype produced by algorithm using windows.
+$$ Error = \sum_{k=1}^{hap} |R^{*}(k) - R(k)|$$
+
+The results are presented in two surface charts.
+One of them illustrates the error as a function of width and overlap parameters.
+Note the similarity of the graph to the graph presented in \cite{gusev}.
+The second one shows the execution time in milliseconds.
+There is an exponential relationship between the error function and the parameters of the window.
+On the other hand, execution time increases linearly with overlap parameter and exponential with window length.
+
+
 \section{Conclusions}
 
 Results show that new approach scales very well.
-There is wide variety of defferent combinations of with and overlap parameters where the error is negligible.
+There is wide variety of different combinations of with and overlap parameters where the error is negligible.
 Only in the corner cases error value grows rapidly.
-What is more, inceasing overlap improves accuracy exponentialy but time is increases only linearly wich laverates and scales computation.
+What is more, increasing overlap improves accuracy exponentially but time is increases only linearly which laverates and scales computation.
 
 \bibliographystyle{spiebib}
-\begin{thebibliography}{99}
-
-\bibitem{gusev} A. Gusev, I. I. Mandoiu, B. Pasaniuc: Highly Scalable Genotype Phasing by Entropy Minimization, IEEE/ACM transactions on computational biology and bioinformatics Vol. 5, No. 2, (april-june ’08)
-\bibitem{nowak} R. M. Nowak, R. Płoski: NullHap – a versatile application to estimate haplotype frequencies from unphased genotypes in the presence of null alleles, BCM bioinformatics 2008, 9:330, August 2008
-\bibitem{boost} D. Abrahams and R.W. Grosse-Kunstleve. Building hybrid systems with Boost. Python. CC Plus Plus Users Journal, 21(7):29–36, 2003.
-\bibitem{bench} D.A. Bader, Y. Li, T. Li, and V. Sachdeva. BioPerf: A benchmark suite to evaluate high-performance computer architecture on bioinformatics applications. 2006.
-\bibitem{hapmap} P. Deloukas and D. Bentley. The HapMap project and its application to genetic studies of drug response. The Pharmacogenomics Journal, 4(2):88–90, 2004.
-\bibitem{em} L. Excoffier and M. Slatkin. Maximum-likelihood estimation of molecular haplotype frequencies in a diploid population. Molecular biology and evolution, 12(5):921, 1995.
-\bibitem{guts} D. Gusfield. Haplotyping as perfect phylogeny: conceptual framework and efficient solutions. In Proceedings of the sixth annual international conference on Computational biology, page 175. ACM, 2002.
-
-\end{thebibliography}
+\bibliography{hap2}
 
 \end{document}
