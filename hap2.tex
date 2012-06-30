@@ -235,6 +235,9 @@ The second one shows the execution time in milliseconds.
 There is an exponential relationship between the error function and the parameters of the window.
 On the other hand, execution time increases linearly with overlap parameter and exponential with window length.
 
+The most important observation is that accuracy depends on the same level on width as well as on overlap parameter.
+This fact could be little supprising because the overlap was from the very beggining treated only as auxiliary parameter.
+Yet it seems that presence of this parameter is crucial as it increases the accuracy exponentially at the expense of linear time complexity.
 
 \section{Conclusions}
 
@@ -242,7 +245,25 @@ Results show that new approach scales very well.
 There is wide variety of different combinations of with and overlap parameters where the error is negligible.
 Only in the corner cases error value grows rapidly.
 What is more, increasing overlap improves accuracy exponentially but time is increases only linearly which laverates and scales computation.
+The key part of the solution is an overlap parameter that acts as a lever -- consuming only a linear time it increases accuracy exponentially. 
 
+
+It is worth noting that the developed architecture satisfies all the assumptions requirements for portability, availability and application performance. 
+The concept of bioinformatics applications was developed and tested in practice and proved to be useful and easy to implement. 
+The range of facilities offered by this architecture allows for quick creation of programs to effectively solve problems frequently encountered in biology.
+\section{Possible improvements}
+
+There are still many important features that are missing in the current version of the application and should be added in future.
+This should positively affect software quality and enable users to perform more accurate and complex analysis.
+
+In order to better test and compare the performance of different algorithms, it would be beneficial to create a test generator, able to produce a population of individuals of a given size according to the distribution described by Hardy--Weinberg equilibrium.
+It can also be checked, whether the input set of observations meets HWE, and as the degree of correlation between observations and HWE affects the accuracy of different algorithms.
+
+Although the application uses threads to monitor the status of the calculation, an important goal is to adapt the server to perform a distributed computation, even on multiple machines which greatly affect the performance because the presented algorithm can be easily parallelised.
+
+Flex technology allows to easily create applications that do not require web browsers to use. In this case only flash player is required. This solution has many advantages, for exaple making it possible to access the file system, creating a shortcut to the application on the desktop or system tray.
+
+There are also some minor improvements to be done such as support for more input and output formats, porting the installation script to other platforms (MS Windows), multi language support as well as some user experience features.
 \bibliographystyle{spiebib}
 \bibliography{hap2}
 
